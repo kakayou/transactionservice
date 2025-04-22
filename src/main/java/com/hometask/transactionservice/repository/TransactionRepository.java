@@ -51,14 +51,28 @@ public class TransactionRepository {
     }
     
     public boolean isDuplicate(Transaction transaction) {
-        return transactionStore.values().stream().anyMatch(existing -> 
-            !existing.getId().equals(transaction.getId()) && // Different id (not the same record)
-            existing.getAccountNumber().equals(transaction.getAccountNumber()) && // Same account
-            existing.getAmount().compareTo(transaction.getAmount()) == 0 && // Same amount
-            existing.getType().equals(transaction.getType()) && // Same type
-            (existing.getDestinationAccount() == null && transaction.getDestinationAccount() == null || 
-             existing.getDestinationAccount() != null && existing.getDestinationAccount().equals(transaction.getDestinationAccount())) && // Same destination (if applicable)
-            ChronoUnit.SECONDS.between(existing.getTimestamp(), transaction.getTimestamp()) < 60 // Within 60 seconds
-        );
+        // Generate a simple "signature" for the transaction that combines account, amount, and type
+        String transactionSignature = transaction.getAccountNumber() + "_" + 
+                                     transaction.getAmount() + "_" + 
+                                     transaction.getType() + "_" + 
+                                     transaction.getDestinationAccount();
+        
+        // Check if we have a transaction with the same signature in the last 60 seconds
+        return transactionStore.values().stream().anyMatch(existing -> {
+            // Different id (not updating the same record)
+            if (existing.getId().equals(transaction.getId())) {
+                return false;
+            }
+            
+            // Generate signature for existing transaction
+            String existingSignature = existing.getAccountNumber() + "_" + 
+                                      existing.getAmount() + "_" + 
+                                      existing.getType() + "_" + 
+                                      existing.getDestinationAccount();
+            
+            // Check if signatures match and if transaction is within the last 60 seconds
+            return existingSignature.equals(transactionSignature) && 
+                   Math.abs(ChronoUnit.SECONDS.between(existing.getTimestamp(), transaction.getTimestamp())) < 60;
+        });
     }
 } 

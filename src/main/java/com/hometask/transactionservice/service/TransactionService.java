@@ -33,6 +33,9 @@ public class TransactionService {
         
         // Check for duplicate transactions
         if (repository.isDuplicate(transaction)) {
+            System.out.println("Duplicate transaction detected: " + request.getAccountNumber() + 
+                               ", amount: " + request.getAmount() + 
+                               ", type: " + request.getType());
             throw new DuplicateTransactionException("This appears to be a duplicate transaction for account " + 
                 request.getAccountNumber() + " with amount " + request.getAmount() + " and type " + request.getType());
         }

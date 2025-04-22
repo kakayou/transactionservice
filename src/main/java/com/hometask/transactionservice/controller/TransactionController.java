@@ -24,12 +24,18 @@ public class TransactionController {
     
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody TransactionRequest request) {
-        Transaction transaction = service.createTransaction(request);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+        Transaction created = service.createTransaction(request);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Transaction> getTransaction(@PathVariable String id) {
+        Transaction transaction = service.getTransaction(id);
+        return ResponseEntity.ok(transaction);
     }
     
     @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions(
+    public ResponseEntity<List<Transaction>> getTransactions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<Transaction> transactions = service.getPaginatedTransactions(page, size);
@@ -46,7 +52,7 @@ public class TransactionController {
     public ResponseEntity<Transaction> updateTransaction(
             @PathVariable String id,
             @Valid @RequestBody TransactionRequest request) {
-        Transaction transaction = service.updateTransaction(id, request);
-        return ResponseEntity.ok(transaction);
+        Transaction updated = service.updateTransaction(id, request);
+        return ResponseEntity.ok(updated);
     }
 } 

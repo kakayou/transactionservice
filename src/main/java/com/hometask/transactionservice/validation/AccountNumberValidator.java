@@ -10,9 +10,12 @@ public class AccountNumberValidator implements ConstraintValidator<AccountNumber
     
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        // Allow null values (null validation is handled by @NotNull if needed)
         if (value == null) {
-            return false;
+            return true;
         }
+        
+        // Check if the value matches the pattern
         return ACCOUNT_NUMBER_PATTERN.matcher(value).matches();
     }
 } 

@@ -15,6 +15,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +29,16 @@ public class ErrorHandlingTest {
     
     @Autowired
     private TransactionRepository transactionRepository;
+    
+    @BeforeEach
+    public void setup() throws Exception {
+        // Clear the transaction store before each test
+        // This is a bit hacky but necessary since we're using an in-memory repository
+        Field transactionStoreField = TransactionRepository.class.getDeclaredField("transactionStore");
+        transactionStoreField.setAccessible(true);
+        Map<String, Transaction> transactionStore = (Map<String, Transaction>) transactionStoreField.get(transactionRepository);
+        transactionStore.clear();
+    }
 
     private TransactionRequest createTransactionRequest() {
         TransactionRequest request = new TransactionRequest();
