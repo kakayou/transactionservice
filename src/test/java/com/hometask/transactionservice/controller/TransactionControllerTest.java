@@ -75,29 +75,6 @@ public class TransactionControllerTest {
     }
 
     @Test
-    void getTransaction_WhenExisting_ShouldReturnTransaction() throws Exception {
-        when(service.getTransaction("test-id")).thenReturn(transaction);
-
-        mockMvc.perform(get("/api/transactions/test-id"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("test-id")))
-                .andExpect(jsonPath("$.accountNumber", is("123456789")))
-                .andExpect(jsonPath("$.type", is("DEPOSIT")));
-
-        verify(service, times(1)).getTransaction("test-id");
-    }
-
-    @Test
-    void getTransaction_WhenNotExisting_ShouldReturnNotFound() throws Exception {
-        when(service.getTransaction("non-existent")).thenThrow(new TransactionNotFoundException("Transaction not found"));
-
-        mockMvc.perform(get("/api/transactions/non-existent"))
-                .andExpect(status().isNotFound());
-
-        verify(service, times(1)).getTransaction("non-existent");
-    }
-
-    @Test
     void getAllTransactions_ShouldReturnAllTransactions() throws Exception {
         List<Transaction> transactions = Arrays.asList(
                 transaction,

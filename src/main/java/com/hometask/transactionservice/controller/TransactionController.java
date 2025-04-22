@@ -28,12 +28,6 @@ public class TransactionController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
     
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getTransaction(@PathVariable String id) {
-        Transaction transaction = service.getTransaction(id);
-        return ResponseEntity.ok(transaction);
-    }
-    
     @GetMapping
     public ResponseEntity<List<Transaction>> getTransactions(
             @RequestParam(defaultValue = "0") int page,
